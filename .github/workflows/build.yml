@@ -1,0 +1,32 @@
+name: Build-ESP32-Bluepad32
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install PlatformIO
+        run: |
+          pip install -U platformio
+          pio pkg update
+
+      - name: Build (esp32dev)
+        run: |
+          pio run -e esp32dev
+
+      - name: Upload firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware-esp32dev
+          path: .pio/build/esp32dev/firmware.bin
